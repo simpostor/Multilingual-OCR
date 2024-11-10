@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Include Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Original Text & Translation</title>
+</head>
+<body class="bg-gradient-to-r from-blue-500 to-purple-500 min-h-screen flex justify-center items-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-2/3">
+        <h2 class="text-2xl font-bold text-center mb-4">OCR and Translation Results</h2>
+
+        {% if ocr_text and translated_text %}
+            <div class="flex justify-center gap-4">
+                <div class="w-full">
+                    <h3 class="text-xl font-semibold mb-2">Original Text:</h3>
+                    <textarea readonly rows="10" class="w-full p-2 border border-gray-300 rounded-lg mb-4">{{ ocr_text }}</textarea>
+                    <a href="{{ url_for('download_file', text=ocr_text, file_type='ocr') }}" class="block text-center bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition mb-4">Download OCR Result</a>
+                </div>
+                <div class="w-full">
+                    <h3 class="text-xl font-semibold mb-2">Translated Text:</h3>
+                    <textarea readonly rows="10" class="w-full p-2 border border-gray-300 rounded-lg mb-4">{{ translated_text }}</textarea>
+                    <a href="{{ url_for('download_file', text=translated_text, file_type='translated') }}" class="block text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition mb-4">Download Translated Result</a>
+                </div>
+            </div>
+        {% elif ocr_text %}
+            <h3 class="text-xl font-semibold mb-2">Original Text:</h3>
+            <textarea readonly rows="10" class="w-full p-2 border border-gray-300 rounded-lg mb-4">{{ ocr_text }}</textarea>
+            <a href="{{ url_for('download_file', text=ocr_text, file_type='ocr') }}" class="block text-center bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition mb-4">Download OCR Result</a>
+        {% elif translated_text %}
+            <h3 class="text-xl font-semibold mb-2">Translated Text:</h3>
+            <textarea readonly rows="10" class="w-full p-2 border border-gray-300 rounded-lg mb-4">{{ translated_text }}</textarea>
+            <a href="{{ url_for('download_file', text=translated_text, file_type='translated') }}" class="block text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition mb-4">Download Translated Result</a>
+        {% endif %}
+
+        <a href="{{ url_for('index') }}" class="block text-center bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 rounded-lg hover:opacity-90 transition mt-4">Return to Main Page</a>
+    </div>
+
+    <!-- Script for redirection after 10 seconds of inactivity -->
+    <script>
+        let inactivityTime = function () {
+            let time;
+            const redirectToIndex = () => window.location.href = "{{ url_for('index') }}";
+
+            // Reset timer on any interaction
+            const resetTimer = () => {
+                clearTimeout(time);
+                time = setTimeout(redirectToIndex, 10000); // 10 seconds
+            };
+
+            // Events to detect user interaction
+            window.onload = resetTimer;
+            document.onmousemove = resetTimer;
+            document.onkeypress = resetTimer;
+            document.ontouchstart = resetTimer;
+            document.onclick = resetTimer;
+
+            // Start the timer
+            time = setTimeout(redirectToIndex, 10000); // 10 seconds to start with
+        };
+
+        inactivityTime();
+    </script>
+</body>
+</html>

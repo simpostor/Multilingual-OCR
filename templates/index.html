@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Include Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Multilingual OCR & Translation</title>
+    <style>
+        /* Add styles for drop zone on body */
+        body.drop-zone {
+            background-color: rgba(0, 0, 0, 0.1); /* Light overlay for visual feedback */
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-blue-500 to-purple-500 min-h-screen flex justify-center items-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full m-4">
+        <h2 class="text-2xl font-bold text-center mb-4">Upload Image or PDF for OCR</h2>
+        <div id="drop-zone" class="w-full h-40 border-4 border-dashed border-gray-300 flex items-center justify-center mb-4 bg-gray-50 rounded-md">
+            <div class="text-center">
+                <img src="static/assets/upload.gif" alt="Cloud Logo" class="mx-auto mb-2 w-20 h-20">
+                <p class="text-gray-500">Drag and drop your image or PDF file here</p>
+            </div>
+        </div>
+        <p class="text-center text-gray-600">or</p>
+        <form id="upload-form" method="post" enctype="multipart/form-data" class="space-y-4">
+            <label class="block">
+                <input type="file" name="file" required class="mt-2 mb-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500">
+            </label>
+            <fieldset class="block">
+                <legend class="font-semibold">Select Languages:</legend>
+                <div class="mt-2 space-y-1">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="languages" value="eng" 
+                               {% if 'eng' in selected_language or not selected_language %}checked{% endif %} 
+                               class="text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <span class="ml-2">English</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="languages" value="hin" 
+                               {% if 'hin' in selected_language %}checked{% endif %} 
+                               class="text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <span class="ml-2">Hindi</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="languages" value="mar" 
+                               {% if 'mar' in selected_language %}checked{% endif %} 
+                               class="text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <span class="ml-2">Marathi</span>
+                    </label>
+                </div>
+            </fieldset>
+            <input type="submit" value="Upload" class="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:opacity-90 transition cursor-pointer">
+        </form>
+        
+        {% if ocr_text %}
+            <h2 class="text-xl font-semibold mt-6 mb-2">OCR Result:</h2>
+            <pre class="bg-gray-100 p-4 rounded-lg">{{ ocr_text }}</pre>
+        {% endif %}
+        
+        {% if translated_text %}
+            <h2 class="text-xl font-semibold mt-6 mb-2">Translated Result:</h2>
+            <pre class="bg-gray-100 p-4 rounded-lg">{{ translated_text }}</pre>
+        {% endif %}
+    </div>
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.querySelector('input[type="file"]');
+        const uploadForm = document.getElementById('upload-form');
+        const body = document.body;
+
+        // Add event listeners to the body for drag-and-drop functionality
+        body.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            body.classList.add('drop-zone');
+        });
+
+        body.addEventListener('dragleave', () => {
+            body.classList.remove('drop-zone');
+        });
+
+        body.addEventListener('drop', (e) => {
+            e.preventDefault();
+            body.classList.remove('drop-zone');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                // Automatically submit the form
+                uploadForm.submit();
+            } else {
+                alert('Please drop a valid file');
+            }
+        });
+
+        // Also keep the drop functionality for the original drop zone
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-blue-600');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-blue-600');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-blue-600');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                // Automatically submit the form
+                uploadForm.submit();
+            } else {
+                alert('Please drop a valid file');
+            }
+        });
+    </script>
+</body>
+</html>

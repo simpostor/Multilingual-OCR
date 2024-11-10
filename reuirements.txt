@@ -1,0 +1,6 @@
+flask
+pytesseract
+pdf2image
+numpy
+pil
+googletrans==4.0.0-rc1

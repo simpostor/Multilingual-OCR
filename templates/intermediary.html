@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Include Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>OCR Result</title>
+    <script>
+        let inactivityTime = function () {
+            let timeout;
+
+            const resetTimer = () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    window.location.href = "{{ url_for('index') }}"; // Redirect to index.html
+                }, 10000); // 10 seconds
+            };
+
+            // Events to reset the timer
+            window.onload = resetTimer; // Reset timer on page load
+            document.onmousemove = resetTimer;
+            document.onkeypress = resetTimer;
+            document.onscroll = resetTimer;
+        };
+
+        // Call the function when the page is loaded
+        window.onload = function() {
+            inactivityTime();
+        };
+    </script>
+</head>
+<body class="bg-gradient-to-r from-blue-500 to-purple-500 min-h-screen flex justify-center items-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-2/3">
+        <h2 class="text-2xl font-bold text-center mb-4">OCR Result</h2>
+
+        <div class="flex justify-center">
+            <div class="w-full">
+                <h3 class="text-xl font-semibold mb-2">Original Text:</h3>
+                <textarea readonly rows="10" class="w-full p-2 border border-gray-300 rounded-lg mb-4">{{ ocr_text }}</textarea>
+                <a href="{{ url_for('download_file', text=ocr_text, file_type='ocr') }}" class="block text-center bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition mb-4">Download OCR Result</a>
+                <form action="{{ url_for('translate_text_view') }}" method="POST">
+                    <input type="hidden" name="ocr_text" value="{{ ocr_text }}">
+                    <button type="submit" class="w-full py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:opacity-90 transition cursor-pointer">Translate Text</button>
+                </form>
+            </div>
+        </div>
+
+        <a href="{{ url_for('index') }}" class="block text-center bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 rounded-lg hover:opacity-90 transition mt-4">Return to Main Page</a>
+    </div>
+</body>
+</html>
